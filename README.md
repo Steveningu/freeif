@@ -27,6 +27,35 @@ The business sets the refund percentage and a unit cap ("first 200 units only"),
 
 The customer never bets. They buy a product at the listed price. The business carries the risk and lays it off on a regulated exchange.
 
+## Two sides, one promo
+
+**Business dashboard** (`/`): the business names the store, picks the event, and sets the item price, refund percentage and unit cap. Before the promo opens it sees, priced live from Gemini:
+
+| Shown before launch | Formula |
+|---|---|
+| Cost per customer | P(event) x refund |
+| Max liability (RLUSD that could be locked) | unit cap x refund |
+| Max promo cost | P(event) x unit cap x refund |
+
+**Storefront** (`/shop`): shoppers see the product, the promise ("50% back if the event happens"), and a live chart of the Gemini probability that they get their refund. Checkout takes a card and shipping address form, then settles the purchase and locks the refund on XRPL, with links to both transactions. Below the featured promo, the storefront lists more promos on markets that are live on Gemini right now (sports first, then crypto), each with its real Gemini probability.
+
+### Sizing example
+
+A store sells 200 TVs at $1,000 with "50% back if the Warriors win", and Gemini prices a Warriors win at 40%.
+
+| | 50% refund | 100% refund |
+|---|---|---|
+| RLUSD locked in escrow (max liability) | $100,000 | $200,000 |
+| Hedge cost on Gemini (P x liability) | $40,000 | $80,000 |
+| Marketing cost per TV | $200 | $400 |
+
+Win or lose, the store's net cost is the hedge premium. A $200-per-TV promo costs the same as a 20% discount, but "half off if the Warriors win" is the one people talk about.
+
+### Why this beats a prediction market for the business
+
+- **No early exit.** On Polymarket or Kalshi a trader can sell when the odds move. A FreeIf customer cannot: the cola is already drunk and the TV is already delivered. The business is never exposed to customers cashing out early.
+- **Demand that tracks the odds.** As the chance of a refund rises, the promo gets more attractive and sells more. Each sale is priced at the live Gemini probability, and the unit cap bounds the total.
+
 ## How it works
 
 1. **Price** (Gemini): the business picks an event. The live Gemini book gives the market-implied probability and the cost per customer.
@@ -50,6 +79,8 @@ The business cannot withhold refunds because it never holds the release key. The
 - Live odds come from Gemini's public production API. When a book is one-sided, the hedge is priced at the ask and the UI says so.
 - Resolution: the attester first looks for Gemini's own resolution on the contract. If it is not exposed yet, it falls back to Gemini's public 1-minute candles (window open vs close) and labels the source both in the UI and in the on-ledger oracle record.
 - Hedge orders go to the Gemini sandbox and require a sandbox API key. Without one, the UI shows the hedge as a plan (size, price, cost) and marks it as not submitted.
+- The storefront checkout form is a demo: card details never leave the page and are not stored. The payment itself is a real XRPL transaction in test RLUSD from a demo customer wallet.
+- Storefront listings beyond the featured promo are previews: their probabilities are live from Gemini, but only the featured promo is open for checkout in the demo.
 - The demo uses Gemini's 5-minute crypto contracts so an entire promo settles on camera. A real business would pick a game, the weather, or any other Gemini event. The code is the same.
 
 ## Run
