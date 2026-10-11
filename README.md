@@ -60,7 +60,7 @@ pip install -r requirements.txt
 python3 setup_wallets.py          # once, about 1 to 2 minutes, writes wallets.json (gitignored)
 # optional, enables real hedge orders (Gemini sandbox key with trading permission):
 export GEMINI_KEY=... GEMINI_SECRET=...
-uvicorn server:app --port 8010    # open http://localhost:8010
+uvicorn server:app --port 8010    # business dashboard: http://localhost:8010 · storefront: http://localhost:8010/shop
 ```
 
 ## Files
@@ -72,4 +72,5 @@ uvicorn server:app --port 8010    # open http://localhost:8010
 | `gemini.py` | Live odds, resolution, sandbox hedge orders |
 | `attester.py` | Holds the release preimage, issues conditions and fulfillments |
 | `setup_wallets.py` | Funds issuer, business, attester and five customers on testnet |
-| `static/index.html` | Dashboard |
+| `static/index.html` | Business dashboard: create promo, hedge, watch settlement |
+| `static/shop.html` | Storefront: live promo with Gemini chance chart, checkout, other promos on live Gemini markets |

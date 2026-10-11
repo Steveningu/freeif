@@ -78,6 +78,29 @@ def index():
     return FileResponse(Path(__file__).parent / "static" / "index.html")
 
 
+@app.get("/shop")
+def shop():
+    return FileResponse(Path(__file__).parent / "static" / "shop.html")
+
+
+@app.get("/api/markets")
+async def markets():
+    try:
+        return {"markets": await asyncio.to_thread(gemini.markets)}
+    except Exception as ex:
+        return {"markets": [], "error": str(ex)[:120]}
+
+
+@app.post("/api/buy")
+async def buy():
+    """Consumer checkout from the storefront: the next test customer wallet pays."""
+    for u in S["customers"]:
+        if not u["paid"]:
+            out = await _checkout(u["idx"])
+            return {"customer": out, "refund": S["campaign"]["refund"], "price": S["campaign"]["price"]}
+    raise HTTPException(400, "all demo customers have checked out")
+
+
 @app.get("/api/state")
 def state():
     c = S["campaign"]
@@ -110,6 +133,7 @@ async def create_campaign(body: CampaignIn):
     }
     S["odds"] = {"ticker": ticker, "p": p, **book, "updated": time.strftime("%H:%M:%S")} if p is not None else {}
     S["simulate"] = []
+    S["odds_hist"] = [[int(time.time()), p]] if p is not None else []
     reset_customers()
     log(f"Promo created: refund {body.refund_pct:.0f}% if {asset} is UP at {expiry:%H:%M} UTC "
         f"(Gemini {ticker}, P(up)={p})")
@@ -217,6 +241,8 @@ async def ticker_loop():
                 p, book = await asyncio.to_thread(gemini.odds, c["ticker"])
                 if p is not None:
                     S["odds"] = {"ticker": c["ticker"], "p": p, **book, "updated": time.strftime("%H:%M:%S")}
+                    S.setdefault("odds_hist", []).append([int(time.time()), p])
+                    del S["odds_hist"][:-300]
                 elif S["odds"].get("ticker") == c["ticker"]:
                     S["odds"]["basis"] = f"last seen {S['odds'].get('updated')}, book now empty"
             if n % 3 == 0:

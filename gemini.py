@@ -43,9 +43,8 @@ def symbol(ticker):
     return f"GEMI-{ticker}-UP"
 
 
-def odds(ticker):
-    """Market-implied P(UP) from the live production book (mid of yes bid/ask)."""
-    c = event(ticker)["contracts"][0]
+def price_of(c):
+    """Market-implied P(YES) for one contract dict from the live book."""
     p = c.get("prices") or {}
     f = lambda v: float(v) if v not in (None, "") else None
     buy, sell = p.get("buy") or {}, p.get("sell") or {}
@@ -62,6 +61,48 @@ def odds(ticker):
     if f(p.get("lastTradePrice")) is not None:
         return f(p["lastTradePrice"]), {"basis": "last trade"}
     return None, {"basis": "empty book"}
+
+
+def odds(ticker):
+    """Market-implied P(UP) for a 5-minute contract from the live production book."""
+    return price_of(event(ticker)["contracts"][0])
+
+
+_MK = {"t": 0, "data": []}
+
+
+def markets(limit=8):
+    """Live Gemini markets for the promo marketplace: sports first, then crypto 5-minute.
+    Every row is a real contract with a live price; cached for 20 seconds."""
+    if time.time() - _MK["t"] < 20 and _MK["data"]:
+        return _MK["data"]
+    d = _get(f"{PROD}/v1/prediction-markets/events?status=active&limit=200")
+    evs = d if isinstance(d, list) else (d.get("data") or d.get("events") or [])
+    rows = []
+    for e in evs:
+        cat = str(e.get("category", "")).lower()
+        kind = "sports" if "sport" in cat else ("crypto5m" if "05M" in str(e.get("ticker", "")) else None)
+        if not kind:
+            continue
+        for c in (e.get("contracts") or [])[:2]:
+            pr, book = price_of(c)
+            if pr is None or not (0.03 < pr < 0.97):
+                continue
+            rows.append({"kind": kind, "event": e.get("title"), "ticker": e.get("ticker"),
+                         "contract": c.get("label") or c.get("abbreviatedName") or c.get("ticker"),
+                         "p": pr, "basis": book.get("basis"), "expiry": e.get("expiryDate")})
+            break
+    rows.sort(key=lambda r: (r["kind"] != "sports", r["expiry"] or ""))
+    seen, out = set(), []
+    for r in rows:  # one row per event title family
+        k = (r["kind"], (r["event"] or "")[:18])
+        if k in seen:
+            continue
+        seen.add(k); out.append(r)
+        if len(out) >= limit:
+            break
+    _MK.update(t=time.time(), data=out)
+    return out
 
 
 # ------------------------------------------------------------ resolution

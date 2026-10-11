@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FreeIf Shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--panel:#0c0d10;--panel2:#121318;--line:#1f2127;--ink:#f4f5f7;--mute:#8a8f99;--accent:#00c805;--no:#ff5000;--lock:#4c8dff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 32px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:5}
+h1{font:800 24px Inter;letter-spacing:-.02em;margin:0} h1 span{color:var(--accent)}
+.nav{display:flex;gap:18px;align-items:center;color:var(--mute);font-size:14px}
+.nav a{text-decoration:none} .nav a:hover{color:var(--ink)}
+main{max-width:1240px;margin:0 auto;padding:26px 32px 60px}
+.eyebrow{font:600 12px Inter;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);margin:0 0 12px}
+.feature{display:grid;grid-template-columns:300px 1fr 360px;gap:22px;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px}
+@media (max-width:1100px){.feature{grid-template-columns:1fr}}
+.tile{border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:120px;min-height:260px;background:radial-gradient(circle at 30% 20%,#1f3b22,#0d1410 70%)}
+.tile.sm{font-size:56px;min-height:120px;border-radius:16px}
+.store{color:var(--mute);font-weight:600;font-size:14px}
+.headline{font:800 30px Inter;letter-spacing:-.03em;line-height:1.15;margin:6px 0 10px}
+.headline em{font-style:normal;color:var(--accent)}
+.price{font:700 22px Inter;margin:10px 0 2px} .price small{color:var(--mute);font-weight:500;font-size:14px}
+.trust{display:flex;gap:10px;align-items:flex-start;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-top:14px;font-size:13px;color:#c9ccd2}
+.trust b{color:var(--ink)}
+.btn{background:var(--accent);color:#000;border:0;border-radius:999px;padding:14px 20px;font:800 16px Inter;cursor:pointer;width:100%;margin-top:14px}
+.btn:disabled{opacity:.35;cursor:not-allowed} .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.chartbox{background:var(--panel2);border:1px solid var(--line);border-radius:18px;padding:16px}
+.chance{display:flex;align-items:baseline;gap:8px}
+.chance b{font:800 46px Inter;letter-spacing:-.04em;color:var(--accent);font-variant-numeric:tabular-nums}
+.chance span{color:var(--mute);font-size:13px}
+.meta{display:flex;justify-content:space-between;color:var(--mute);font-size:12px;margin-top:8px}
+.clock{font:700 15px "JetBrains Mono",monospace;color:var(--ink)}
+.left{font-size:13px;color:var(--mute);margin-top:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.card .t{font:700 16px Inter;line-height:1.25}
+.card .e{color:var(--mute);font-size:12px}
+.row{display:flex;justify-content:space-between;align-items:center}
+.pct{font:800 22px Inter;color:var(--accent);font-variant-numeric:tabular-nums}
+.bar{height:5px;background:var(--panel2);border-radius:99px;overflow:hidden} .bar i{display:block;height:100%;background:var(--accent)}
+.tag{font:700 11px Inter;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);border:1px solid var(--line);border-radius:999px;padding:3px 9px}
+.why{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
+@media (max-width:900px){.why{grid-template-columns:1fr}}
+.why div{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;font-size:14px;color:#c9ccd2}
+.why b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+/* modal */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:20;padding:16px}
+.ov.on{display:flex}
+.modal{width:100%;max-width:520px;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px;max-height:92vh;overflow:auto}
+.modal h3{margin:0 0 4px;font:800 22px Inter}
+.sum{display:flex;gap:12px;align-items:center;background:var(--panel2);border-radius:14px;padding:12px;margin:12px 0}
+.sum .em{font-size:40px}
+label{display:block;color:var(--mute);font-size:12px;font-weight:500;margin:10px 0 5px}
+input{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:11px 12px;font:500 15px Inter;outline:none}
+input:focus{border-color:var(--accent)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px} .three{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px}
+.fine{color:var(--mute);font-size:12px;margin-top:10px}
+.steps div{padding:8px 0;border-bottom:1px solid var(--line);font-size:14px}
+.ok{color:var(--accent)} .steps a{color:var(--lock);text-decoration:none;margin-left:6px}
+.x{float:right;background:none;border:0;color:var(--mute);font-size:22px;cursor:pointer}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:24px;padding:40px;text-align:center;color:var(--mute)}
+</style>
+</head>
+<body>
+<header>
+  <h1>FREE<span>IF</span> <span style="color:var(--mute);font-weight:600;font-size:15px">shop</span></h1>
+  <div class="nav"><span>Promos backed by Gemini · refunds locked on XRPL</span><a href="/">Business dashboard →</a></div>
+</header>
+
+<main>
+  <p class="eyebrow">Live promo</p>
+  <div id="feature"></div>
+
+  <p class="eyebrow" style="margin-top:32px">More promos on live Gemini markets</p>
+  <div class="grid" id="others"></div>
+  <p class="fine">Listing previews: every chance shown is live from a real Gemini contract. In this demo only the featured promo is open for checkout.</p>
+
+  <div class="why">
+    <div><b>Shop normally</b>You pay the listed price for something you wanted anyway. You never place a bet.</div>
+    <div><b>Your refund is locked</b>The moment you pay, your refund sits in escrow on the XRP Ledger. The store cannot take it back.</div>
+    <div><b>Paid automatically</b>When the event resolves, refunds land in every buyer's wallet. Nobody files a claim.</div>
+  </div>
+</main>
+
+<div class="ov" id="ov"><div class="modal" id="modal"></div></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const short = a => a ? a.slice(0,6)+"…"+a.slice(-4) : "";
+const EMOJI = [["cola","🥤"],["coffee","☕"],["pizza","🍕"],["burrito","🌯"],["electronic","📺"],["tv","📺"],["sneaker","👟"],["shoe","👟"],["home","🛋️"],["furniture","🛏️"]];
+const emojiFor = s => (EMOJI.find(([k]) => (s||"").toLowerCase().includes(k)) || [0,"🛍️"])[1];
+const BRANDS = [["Bay Cola","🥤","12-pack",12,50],["Golden Burrito","🌯","Burrito bowl",14,100],["Dub Sneakers","👟","Court sneakers",120,30],
+                ["Splash Pizza","🍕","Large pizza",22,100],["Bay Electronics","📺","55-inch TV",1000,50],["Fog City Coffee","☕","Cold brew",6,100],
+                ["Mission Gear","🧢","Team cap",35,50],["Sunset Books","📚","Hardcover",28,100]];
+let S = null, MK = [], buying = false;
+
+function spark(hist, w=520, h=130){
+  if(!hist || hist.length < 2) hist = hist && hist.length ? [hist[0], hist[0]] : [[0,.5],[1,.5]];
+  const t0 = hist[0][0], t1 = hist[hist.length-1][0] || t0+1, span = Math.max(1, t1 - t0);
+  const pts = hist.map(([t,p]) => [((t-t0)/span)*w, (1-p)*h]);
+  const line = pts.map(p => p.map(v=>v.toFixed(1)).join(",")).join(" ");
+  const last = pts[pts.length-1];
+  return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none">
+    <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#00c805" stop-opacity=".35"/><stop offset="1" stop-color="#00c805" stop-opacity="0"/></linearGradient></defs>
+    <line x1="0" y1="${h/2}" x2="${w}" y2="${h/2}" stroke="#2a2d34" stroke-dasharray="4 4"/>
+    <polygon points="0,${h} ${line} ${w},${h}" fill="url(#g)"/>
+    <polyline points="${line}" fill="none" stroke="#00c805" stroke-width="2.5" stroke-linejoin="round"/>
+    <circle cx="${last[0]}" cy="${last[1]}" r="5" fill="#00c805"/></svg>`;
+}
+
+function renderFeature(){
+  const c = S && S.campaign;
+  if(!c){ $("feature").innerHTML = `<div class="empty">No live promo right now. Open one from the <a href="/">business dashboard</a>.</div>`; return; }
+  const pct = Math.round(c.refund / c.price * 100);
+  const t = new Date(c.expiry).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"});
+  const p = (S.odds && S.odds.p != null) ? S.odds.p : c.odds_at_start;
+  const sl = S.seconds_left ?? 0, open = c.status === "open";
+  const left = S.customers.filter(u => !u.paid).length;
+  const done = c.status === "settled" || c.status.startsWith("resolved");
+  const status = open ? `<span class="clock">${String(Math.floor(sl/60)).padStart(2,"0")}:${String(sl%60).padStart(2,"0")}</span> until the event resolves`
+    : c.outcome === true ? `<b class="ok">Event happened. Refunds released.</b>` : c.outcome === false ? `Event did not happen. Escrows return to the store.` : `Window closed. Reading the result from Gemini…`;
+  $("feature").innerHTML = `<div class="feature">
+    <div class="tile">${emojiFor(c.store)}</div>
+    <div>
+      <div class="store">${c.store || "Store"}</div>
+      <div class="headline">Buy today, get <em>${pct}% back</em> if ${c.asset} closes up at <em>${t}</em></div>
+      <div class="price">${c.price.toFixed(2)} RLUSD <small>· you get ${c.refund.toFixed(2)} back if it happens</small></div>
+      <div class="trust">🔒<div><b>Your refund is locked on the XRP Ledger the moment you pay.</b> It sits in escrow under a crypto-condition, and an independent attester releases it from Gemini's result. The store cannot take it back.</div></div>
+      <button class="btn" ${open && left ? "" : "disabled"} onclick="openCheckout()">${open ? (left ? "Buy now" : "Sold out") : (done ? "Promo ended" : "Closed")}</button>
+      <div class="left">${S.customers.filter(u=>u.paid).length} bought · ${left} left in this demo · demo trigger chosen so it settles on camera</div>
+    </div>
+    <div class="chartbox">
+      <div class="chance"><b>${p!=null ? (p*100).toFixed(1)+"%" : "--"}</b><span>chance you get your refund</span></div>
+      ${spark(S.odds_hist)}
+      <div class="meta"><span>Live from Gemini · ${c.symbol}</span><span>${S.odds && S.odds.basis ? S.odds.basis : ""}</span></div>
+      <div class="left">${status}</div>
+    </div></div>`;
+}
+
+function renderOthers(){
+  if(!MK.length){ $("others").innerHTML = `<div class="fine">Loading live Gemini markets…</div>`; return; }
+  $("others").innerHTML = MK.map((m, i) => {
+    const [brand, em, item, price, pct] = BRANDS[i % BRANDS.length];
+    return `<div class="card">
+      <div class="tile sm">${em}</div>
+      <div class="row"><span class="store">${brand}</span><span class="tag">${m.kind === "sports" ? "Sports" : "Crypto"}</span></div>
+      <div class="t">${item}, ${pct}% back if ${m.contract}</div>
+      <div class="e">${m.event}</div>
+      <div class="row"><span class="pct">${(m.p*100).toFixed(0)}%</span><span class="e">chance · ${price} RLUSD</span></div>
+      <div class="bar"><i style="width:${(m.p*100).toFixed(0)}%"></i></div>
+      <button class="btn ghost" disabled style="margin-top:2px">Listing preview</button>
+    </div>`; }).join("");
+}
+
+function openCheckout(){
+  const c = S.campaign;
+  $("modal").innerHTML = `<button class="x" onclick="closeM()">×</button><h3>Checkout</h3>
+    <div class="sum"><span class="em">${emojiFor(c.store)}</span><div><b>${c.store}</b><br><span class="fine" style="margin:0">${c.price.toFixed(2)} RLUSD · ${Math.round(c.refund/c.price*100)}% back if ${c.asset} closes up</span></div></div>
+    <form id="f" onsubmit="pay(event)">
+      <div class="two"><div><label>Full name</label><input required placeholder="Alex Kim"></div><div><label>Email</label><input required type="email" placeholder="alex@example.com"></div></div>
+      <label>Card number</label><input required inputmode="numeric" placeholder="4242 4242 4242 4242">
+      <div class="three"><div><label>Expiry</label><input required placeholder="12 / 28"></div><div><label>CVC</label><input required placeholder="123"></div><div><label>ZIP</label><input required placeholder="94704"></div></div>
+      <label>Shipping address</label><input required placeholder="2425 Bancroft Way, Berkeley, CA">
+      <button class="btn" type="submit">Pay ${c.price.toFixed(2)} RLUSD</button>
+      <div class="fine">Demo checkout: card details never leave this page and are not stored. Payment settles in test RLUSD from a demo customer wallet on XRPL testnet.</div>
+    </form>`;
+  $("ov").classList.add("on");
+}
+function closeM(){ if(!buying) $("ov").classList.remove("on"); }
+
+async function pay(e){
+  e.preventDefault(); buying = true;
+  const c = S.campaign;
+  $("modal").innerHTML = `<h3>Processing</h3><div class="steps"><div>Paying the store on XRPL… <span class="fine">(a few seconds)</span></div><div>Locking your refund in escrow…</div></div>`;
+  try{
+    const r = await fetch("/api/buy", {method:"POST"});
+    const j = await r.json();
+    if(!r.ok) throw new Error(j.detail || "checkout failed");
+    const u = j.customer;
+    $("modal").innerHTML = `<button class="x" onclick="buying=false;closeM()">×</button><h3 class="ok">You're in.</h3>
+      <div class="steps">
+        <div>✓ Paid ${j.price.toFixed(2)} RLUSD to ${c.store} ${u.pay_tx ? `<a target="_blank" href="${u.pay_tx}">payment tx↗</a>` : ""}</div>
+        <div>🔒 ${j.refund.toFixed(2)} RLUSD refund locked in XRPL escrow ${u.escrow_tx ? `<a target="_blank" href="${u.escrow_tx}">escrow tx↗</a>` : ""}</div>
+        <div>⏱ If ${c.asset} closes up at ${new Date(c.expiry).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}, it lands in wallet ${short(u.address)} automatically.</div>
+      </div>
+      <button class="btn" onclick="buying=false;closeM()">Done</button>`;
+  }catch(err){
+    $("modal").innerHTML = `<button class="x" onclick="buying=false;closeM()">×</button><h3>Checkout failed</h3><p class="fine">${err.message}</p>`;
+  }
+  buying = false;
+}
+
+async function tick(){ try{ S = await (await fetch("/api/state")).json(); renderFeature(); }catch(e){} }
+async function loadMarkets(){ try{ MK = (await (await fetch("/api/markets")).json()).markets || []; renderOthers(); }catch(e){} }
+tick(); loadMarkets(); setInterval(tick, 1500); setInterval(loadMarkets, 20000);
+</script>
+</body>
+</html>
