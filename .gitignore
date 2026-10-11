@@ -1,0 +1,6 @@
+wallets.json
+attester_secrets.json
+state.json
+.env
+.venv/
+__pycache__/
